@@ -20,7 +20,8 @@ import java.util.Map;
 @Log4j2
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public final class MHBUtil {
-    public static Map<String, String> extractQueryParam(String query) {
+    public static Map<String, String> extractQueryParam(HttpExchange exchange) {
+        String query = exchange.getRequestURI().getQuery();
         if (query == null) {
             return null;
         }
@@ -34,6 +35,14 @@ public final class MHBUtil {
             }
         }
         return result;
+    }
+
+    public static String getQueryParam(HttpExchange exchange, String name) {
+        Map<String, String> queryParam = extractQueryParam(exchange);
+        if (queryParam == null) {
+            return null;
+        }
+        return queryParam.get(name);
     }
 
     public static void writeResponse(HttpExchange exchange, String response) {

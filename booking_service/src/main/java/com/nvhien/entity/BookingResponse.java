@@ -1,17 +1,17 @@
 package com.nvhien.entity;
 
 import lombok.Builder;
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
-import java.util.Date;
-
-@Data
+@Getter
+@Setter
 @Builder
-public class Booking {
+public class BookingResponse {
     private long id;
     private int customerId;
     private int hotelId;
-    private Date checkinTime;
-    private Date checkoutTime;
+    private String checkinTime;
+    private String checkoutTime;
     private double totalAmount;
 }

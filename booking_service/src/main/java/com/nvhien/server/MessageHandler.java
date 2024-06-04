@@ -1,8 +1,8 @@
 package com.nvhien.server;
 
+import com.nvhien.annotation.RestApi;
 import com.nvhien.entity.ResponseEntity;
-import com.nvhien.handler.IBookingHandler;
-import com.nvhien.module.RestApi;
+import com.nvhien.itf.IHandler;
 import com.nvhien.util.MHBUtil;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
@@ -16,10 +16,10 @@ import java.util.Map;
 @Singleton
 @Log4j2
 public class MessageHandler implements HttpHandler {
-    private final Map<RestApi, IBookingHandler> handlers;
+    private final Map<RestApi, IHandler> handlers;
 
     @Inject
-    public MessageHandler(Map<RestApi, IBookingHandler> handlers) {
+    public MessageHandler(Map<RestApi, IHandler> handlers) {
         this.handlers = handlers;
     }
 
@@ -30,13 +30,15 @@ public class MessageHandler implements HttpHandler {
         String path = exchange.getRequestURI().getPath();
         for (var entry : handlers.entrySet()) {
             RestApi api = entry.getKey();
-            IBookingHandler handler = entry.getValue();
+            IHandler handler = entry.getValue();
             if (api.method().name().equals(method) && api.path().equals(path)) {
                 ResponseEntity responseEntity = handler.execute(exchange);
                 exchange.getResponseHeaders().add("Content-Type", responseEntity.getContentType());
                 String responseBody = responseEntity.getBody();
-                exchange.sendResponseHeaders(responseEntity.getCode(), responseBody.length());
-                MHBUtil.writeResponse(exchange, responseBody);
+                exchange.sendResponseHeaders(responseEntity.getCode(), responseBody == null ? 0 : responseBody.length());
+                if (responseBody != null) {
+                    MHBUtil.writeResponse(exchange, responseBody);
+                }
                 exchange.close();
                 return;
             }

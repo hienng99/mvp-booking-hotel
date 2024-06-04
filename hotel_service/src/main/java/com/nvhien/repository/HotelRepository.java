@@ -8,7 +8,6 @@ import javax.inject.Inject;
 import javax.inject.Singleton;
 import java.sql.Connection;
 import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
@@ -23,31 +22,40 @@ public class HotelRepository implements IHotelRepository {
     }
 
     @Override
-    public List<Hotel> findByLocation(String location) throws SQLException {
+    public List<Hotel> findByLocation(String location, int offset, int limit) {
         List<Hotel> hotels = new ArrayList<>();
-        Statement statement = connection.createStatement();
-        StringBuilder sb = new StringBuilder();
-        sb.append("SELECT * FROM hotels WHERE street LIKE '%");
-        sb.append(location);
-        sb.append("%' OR city LIKE '%");
-        sb.append(location);
-        sb.append("%'");
-        log.info("Execute query: {}", sb.toString());
-        ResultSet resultSet = statement.executeQuery(sb.toString());
-//        Arrays.stream(Hotel.class.getFields()).forEach(field -> field.getType());
+        try {
+            Statement statement = connection.createStatement();
+            StringBuilder sb = new StringBuilder();
+            sb.append("SELECT * FROM hotels WHERE street LIKE '%");
+            sb.append(location);
+            sb.append("%' OR city LIKE '%");
+            sb.append(location);
+            sb.append("%'");
+            sb.append(" ORDER BY id ASC");
+            sb.append(" LIMIT ");
+            sb.append(limit);
+            sb.append(" OFFSET ");
+            sb.append(offset);
+            log.info("Execute query: {}", sb.toString());
+            ResultSet resultSet = statement.executeQuery(sb.toString());
 
-        while (resultSet.next()) {
-            Hotel hotel = Hotel.builder()
-                    .id(resultSet.getInt("id"))
-                    .name(resultSet.getString("name"))
-                    .street(resultSet.getString("street"))
-                    .ward(resultSet.getString("ward"))
-                    .district(resultSet.getString("district"))
-                    .city(resultSet.getString("city"))
-                    .country(resultSet.getString("country"))
-                    .build();
-            hotels.add(hotel);
+            while (resultSet.next()) {
+                Hotel hotel = Hotel.builder()
+                        .id(resultSet.getInt("id"))
+                        .name(resultSet.getString("name"))
+                        .street(resultSet.getString("street"))
+                        .ward(resultSet.getString("ward"))
+                        .district(resultSet.getString("district"))
+                        .city(resultSet.getString("city"))
+                        .country(resultSet.getString("country"))
+                        .build();
+                hotels.add(hotel);
+            }
+            return hotels;
+        } catch (Exception exception) {
+            log.error(exception);
+            return null;
         }
-        return hotels;
     }
 }

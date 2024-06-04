@@ -5,7 +5,6 @@ import com.nvhien.repository.HotelRepository;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
-import java.sql.SQLException;
 import java.util.List;
 
 @Singleton
@@ -18,12 +17,7 @@ public class HotelService implements IHotelService {
     }
 
     @Override
-    public List<Hotel> findByLocation(String location) {
-        try {
-            return hotelRepository.findByLocation(location);
-        } catch (SQLException sqlException) {
-            sqlException.printStackTrace();
-            return null;
-        }
+    public List<Hotel> findByLocation(String location, int startIndex, int pageSize) {
+        return hotelRepository.findByLocation(location, startIndex, pageSize);
     }
 }

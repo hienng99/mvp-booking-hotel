@@ -8,4 +8,5 @@ public class BookingRequest {
     private int hotelId;
     private long checkinTime;
     private long checkoutTime;
+    private double totalAmount;
 }

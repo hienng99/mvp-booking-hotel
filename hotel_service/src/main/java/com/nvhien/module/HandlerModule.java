@@ -1,8 +1,9 @@
 package com.nvhien.module;
 
+import com.nvhien.annotation.RestApi;
 import com.nvhien.enums.HttpMethod;
 import com.nvhien.handler.GetHotelByLocationHandler;
-import com.nvhien.handler.IHandler;
+import com.nvhien.itf.IHandler;
 import dagger.Module;
 import dagger.Provides;
 import dagger.multibindings.IntoMap;

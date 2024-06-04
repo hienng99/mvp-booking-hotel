@@ -7,7 +7,7 @@ import lombok.Setter;
 @Getter
 @Setter
 @Builder
-public class Hotel {
+public class HotelResponse {
     private int id;
     private String name;
     private String street;

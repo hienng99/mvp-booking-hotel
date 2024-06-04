@@ -1,7 +1,7 @@
 package com.nvhien.server;
 
-import com.nvhien.handler.IHandler;
-import com.nvhien.module.RestApi;
+import com.nvhien.annotation.RestApi;
+import com.nvhien.itf.IHandler;
 import com.nvhien.util.MHBUtil;
 import com.nvhien.entity.ResponseEntity;
 import com.sun.net.httpserver.HttpExchange;
@@ -35,8 +35,10 @@ public class MessageHandler implements HttpHandler {
                 ResponseEntity responseEntity = handler.execute(exchange);
                 exchange.getResponseHeaders().add("Content-Type", responseEntity.getContentType());
                 String responseBody = responseEntity.getBody();
-                exchange.sendResponseHeaders(200, responseBody.length());
-                MHBUtil.writeResponse(exchange, responseBody);
+                exchange.sendResponseHeaders(responseEntity.getCode(), responseBody == null ? 0 : responseBody.length());
+                if (responseBody != null) {
+                    MHBUtil.writeResponse(exchange, responseBody);
+                }
                 exchange.close();
                 return;
             }

@@ -1,9 +1,9 @@
 package com.nvhien.repository;
 
-import com.nvhien.entity.BookingDAO;
-
-import java.sql.SQLException;
+import com.nvhien.entity.Booking;
 
 public interface IBookingRepository {
-    int create(BookingDAO bookingDAO) throws SQLException;
+    int create(Booking booking);
+
+    Booking getById(long id);
 }
