@@ -51,7 +51,8 @@ public class GetHotelByLocationHandler implements IHandler {
             log.error("Invalid query param");
             return ResponseEntity.builder()
                     .code(400)
-                    .contentType("application/json")
+                    .contentType("text/plain")
+                    .body("Bad request")
                     .build();
         }
     }
