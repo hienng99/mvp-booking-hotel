@@ -10,9 +10,6 @@ import lombok.Setter;
 public class Hotel {
     private int id;
     private String name;
-    private String street;
-    private String ward;
-    private String district;
-    private String city;
-    private String country;
+    private String address;
+    private String phone;
 }

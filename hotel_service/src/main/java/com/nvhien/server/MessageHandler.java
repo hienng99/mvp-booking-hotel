@@ -1,9 +1,9 @@
 package com.nvhien.server;
 
 import com.nvhien.annotation.RestApi;
+import com.nvhien.entity.ResponseEntity;
 import com.nvhien.itf.IHandler;
 import com.nvhien.util.MHBUtil;
-import com.nvhien.entity.ResponseEntity;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
 import lombok.extern.log4j.Log4j2;
@@ -33,12 +33,7 @@ public class MessageHandler implements HttpHandler {
             IHandler handler = entry.getValue();
             if (api.method().name().equals(method) && api.path().equals(path)) {
                 ResponseEntity responseEntity = handler.execute(exchange);
-                exchange.getResponseHeaders().add("Content-Type", responseEntity.getContentType());
-                String responseBody = responseEntity.getBody();
-                exchange.sendResponseHeaders(responseEntity.getCode(), responseBody == null ? 0 : responseBody.length());
-                if (responseBody != null) {
-                    MHBUtil.writeResponse(exchange, responseBody);
-                }
+                MHBUtil.writeResponse(exchange, responseEntity);
                 exchange.close();
                 return;
             }

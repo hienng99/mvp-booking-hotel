@@ -1,7 +1,7 @@
 package com.nvhien.handler;
 
 import com.nvhien.common.HotelConst;
-import com.nvhien.entity.Hotel;
+import com.nvhien.entity.HotelResponse;
 import com.nvhien.entity.ResponseEntity;
 import com.nvhien.itf.IHandler;
 import com.nvhien.service.HotelService;
@@ -35,8 +35,8 @@ public class GetHotelByLocationHandler implements IHandler {
             String pageSizeStr = MHBUtil.getQueryParam(exchange, "pageSize");
             int pageSize = pageSizeStr == null || StringUtils.isEmpty(pageSizeStr) ? HotelConst.DEFAULT_PAGE_SIZE : Integer.parseInt(pageSizeStr);
 
-            List<Hotel> hotels = hotelService.findByLocation(location, startIndex, pageSize);
-            if (hotels == null) {
+            List<HotelResponse> hotelResponses = hotelService.findByLocation(location, startIndex, pageSize);
+            if (hotelResponses == null) {
                 return ResponseEntity.builder()
                         .code(500)
                         .contentType("application/json")
@@ -45,7 +45,7 @@ public class GetHotelByLocationHandler implements IHandler {
             return ResponseEntity.builder()
                     .code(200)
                     .contentType("application/json")
-                    .body(JsonUtil.objToJsonString(hotels))
+                    .body(JsonUtil.objToJsonString(hotelResponses))
                     .build();
         } catch (NumberFormatException e) {
             log.error("Invalid query param");

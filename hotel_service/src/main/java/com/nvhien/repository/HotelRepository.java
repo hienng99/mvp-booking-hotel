@@ -27,12 +27,11 @@ public class HotelRepository implements IHotelRepository {
         try {
             Statement statement = connection.createStatement();
             StringBuilder sb = new StringBuilder();
-            sb.append("SELECT * FROM hotels WHERE street LIKE '%");
+            sb.append("SELECT * FROM hotels WHERE MATCH(address) AGAINST ('");
             sb.append(location);
-            sb.append("%' OR city LIKE '%");
+            sb.append("' IN BOOLEAN MODE) ORDER BY MATCH(address) AGAINST ('");
             sb.append(location);
-            sb.append("%'");
-            sb.append(" ORDER BY id ASC");
+            sb.append("' IN BOOLEAN MODE) DESC");
             sb.append(" LIMIT ");
             sb.append(limit);
             sb.append(" OFFSET ");
@@ -44,11 +43,8 @@ public class HotelRepository implements IHotelRepository {
                 Hotel hotel = Hotel.builder()
                         .id(resultSet.getInt("id"))
                         .name(resultSet.getString("name"))
-                        .street(resultSet.getString("street"))
-                        .ward(resultSet.getString("ward"))
-                        .district(resultSet.getString("district"))
-                        .city(resultSet.getString("city"))
-                        .country(resultSet.getString("country"))
+                        .address(resultSet.getString("address"))
+                        .phone(resultSet.getString("phone_number"))
                         .build();
                 hotels.add(hotel);
             }

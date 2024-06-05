@@ -1,6 +1,7 @@
 package com.nvhien.util;
 
 
+import com.nvhien.entity.ResponseEntity;
 import com.sun.net.httpserver.HttpExchange;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
@@ -45,9 +46,15 @@ public final class MHBUtil {
         return queryParam.get(name);
     }
 
-    public static void writeResponse(HttpExchange exchange, String response) {
+    public static void writeResponse(HttpExchange exchange, ResponseEntity responseEntity) {
+        exchange.getResponseHeaders().add("Content-Type", responseEntity.getContentType());
+        if (responseEntity.getBody() == null) {
+            return;
+        }
+        byte[] responseBytes = responseEntity.getBody().getBytes(StandardCharsets.UTF_8);
         try (OutputStream os = exchange.getResponseBody()) {
-            os.write(response.getBytes(StandardCharsets.UTF_8));
+            exchange.sendResponseHeaders(200, responseBytes.length);
+            os.write(responseBytes);
         } catch (IOException e) {
             log.error("Error writing response: {}", e.getMessage());
         }
