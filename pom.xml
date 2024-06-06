@@ -12,6 +12,7 @@
         <module>hotel_service</module>
         <module>booking_service</module>
         <module>common_lib</module>
+        <module>gateway</module>
     </modules>
 
     <properties>

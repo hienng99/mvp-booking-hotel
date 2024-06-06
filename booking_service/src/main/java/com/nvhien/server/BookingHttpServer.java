@@ -23,8 +23,8 @@ public class BookingHttpServer {
     }
 
     public void start() throws IOException {
-        HttpServer server = HttpServer.create(new InetSocketAddress(port), 0);
-        server.createContext("/api", messageHandler);
+        HttpServer server = HttpServer.create(new InetSocketAddress(8082), 0);
+        server.createContext("/api/v1", messageHandler);
         server.setExecutor(Executors.newCachedThreadPool());
         server.start();
         log.warn("Server started on port {}", port);

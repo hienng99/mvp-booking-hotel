@@ -14,6 +14,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
+import java.net.URLDecoder;
+import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
@@ -43,12 +45,17 @@ public final class MHBUtil {
         if (queryParam == null) {
             return null;
         }
-        return queryParam.get(name);
+        return URLDecoder.decode(queryParam.get(name), StandardCharsets.UTF_8);
     }
 
-    public static void writeResponse(HttpExchange exchange, ResponseEntity responseEntity) {
+    public static void sendResponse(HttpExchange exchange, ResponseEntity responseEntity) {
         exchange.getResponseHeaders().add("Content-Type", responseEntity.getContentType());
         if (responseEntity.getBody() == null) {
+            try {
+                exchange.sendResponseHeaders(responseEntity.getCode(), 0);
+            } catch (IOException e) {
+                log.error("Error when sending response.");
+            }
             return;
         }
         byte[] responseBytes = responseEntity.getBody().getBytes(StandardCharsets.UTF_8);
@@ -56,7 +63,7 @@ public final class MHBUtil {
             exchange.sendResponseHeaders(200, responseBytes.length);
             os.write(responseBytes);
         } catch (IOException e) {
-            log.error("Error writing response: {}", e.getMessage());
+            log.error("Error when sending response.");
         }
     }
 
@@ -71,5 +78,18 @@ public final class MHBUtil {
             log.error("Error get json request: {}", ioException.getMessage());
             return null;
         }
+    }
+
+    public static String encodeQueryParam(HttpExchange exchange) {
+        Map<String, String> queryParams = extractQueryParam(exchange);
+        if (queryParams == null || queryParams.isEmpty()) {
+            return null;
+        }
+        StringBuilder queryParamStr = new StringBuilder();
+        queryParams.forEach((key, value) -> {
+            queryParamStr.append(key).append("=").append(URLEncoder.encode(value, StandardCharsets.UTF_8)).append("&");
+        });
+        queryParamStr.deleteCharAt(queryParamStr.length() - 1);
+        return queryParamStr.toString();
     }
 }

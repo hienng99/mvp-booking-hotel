@@ -15,7 +15,7 @@ public abstract class HandlerModule {
     @Provides
     @IntoMap
     @Singleton
-    @RestApi(method = HttpMethod.GET, path = "/api/hotel")
+    @RestApi(method = HttpMethod.GET, path = "/api/v1")
     static IHandler getHotelByLocationHandler(GetHotelByLocationHandler getHotelByLocationHandler) {
         return getHotelByLocationHandler;
     }

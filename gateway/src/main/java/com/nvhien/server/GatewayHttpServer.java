@@ -10,21 +10,21 @@ import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.util.concurrent.Executors;
 
-@Singleton
 @Log4j2
-public class HotelHttpServer {
+@Singleton
+public class GatewayHttpServer {
     private final MessageHandler messageHandler;
     private final int port;
 
     @Inject
-    public HotelHttpServer(MessageHandler messageHandler) {
+    public GatewayHttpServer(MessageHandler messageHandler) {
         this.messageHandler = messageHandler;
-        this.port = ConfigUtil.getConfigAsInt("app.port", 8081);
+        this.port = 8080;
     }
 
     public void start() throws IOException {
-        HttpServer server = HttpServer.create(new InetSocketAddress(8081), 0);
-        server.createContext("/api/v1", messageHandler);
+        HttpServer server = HttpServer.create(new InetSocketAddress(port), 0);
+        server.createContext("/api", messageHandler);
         server.setExecutor(Executors.newCachedThreadPool());
         server.start();
         log.warn("Server started on port {}", port);

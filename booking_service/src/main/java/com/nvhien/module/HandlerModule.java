@@ -16,7 +16,7 @@ public abstract class HandlerModule {
     @Provides
     @IntoMap
     @Singleton
-    @RestApi(method = HttpMethod.POST, path = "/api/booking")
+    @RestApi(method = HttpMethod.POST, path = "/api/v1")
     static IHandler createBookingHandler(BookingCreateHandler bookingCreateHandler) {
         return bookingCreateHandler;
     }
@@ -24,7 +24,7 @@ public abstract class HandlerModule {
     @Provides
     @IntoMap
     @Singleton
-    @RestApi(method = HttpMethod.GET, path = "/api/booking")
+    @RestApi(method = HttpMethod.GET, path = "/api/v1")
     static IHandler getBookingByIdHandler(BookingGetByIdHandler bookingGetByIdHandler) {
         return bookingGetByIdHandler;
     }

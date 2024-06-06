@@ -26,6 +26,12 @@ public class BookingCreateHandler implements IHandler {
     @Override
     public ResponseEntity execute(HttpExchange exchange) {
         JSONObject jsonRequest = MHBUtil.getJsonRequest(exchange);
+        if (jsonRequest == null) {
+            return ResponseEntity.builder()
+                    .contentType("application/json")
+                    .code(400)
+                    .build();
+        }
         BookingRequest bookingRequest = JsonUtil.jsonStringToObj(jsonRequest.toJSONString(), BookingRequest.class);
         boolean isSuccess = service.create(bookingRequest);
         return ResponseEntity.builder()

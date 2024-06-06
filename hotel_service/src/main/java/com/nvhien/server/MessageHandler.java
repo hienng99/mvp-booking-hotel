@@ -33,13 +33,13 @@ public class MessageHandler implements HttpHandler {
             IHandler handler = entry.getValue();
             if (api.method().name().equals(method) && api.path().equals(path)) {
                 ResponseEntity responseEntity = handler.execute(exchange);
-                MHBUtil.writeResponse(exchange, responseEntity);
+                MHBUtil.sendResponse(exchange, responseEntity);
                 exchange.close();
                 return;
             }
         }
 
-        exchange.sendResponseHeaders(405, 0);
+        exchange.sendResponseHeaders(404, 0);
         exchange.close();
     }
 }
