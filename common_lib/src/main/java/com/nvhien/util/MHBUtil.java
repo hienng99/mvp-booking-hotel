@@ -57,20 +57,22 @@ public final class MHBUtil {
 
     public static void sendResponse(HttpExchange exchange, ResponseEntity responseEntity) {
         exchange.getResponseHeaders().add("Content-Type", responseEntity.getContentType());
-        if (responseEntity.getCode() != 200) {
+        if (responseEntity.getCode() != 200 || responseEntity.getBody() == null) {
             try {
                 exchange.sendResponseHeaders(responseEntity.getCode(), 0);
+                return;
             } catch (IOException e) {
-                log.error("Error when sending response.");
+                log.error("Error when sending response.", e);
+                return;
             }
-            return;
         }
+
         byte[] responseBytes = responseEntity.getBody().getBytes(StandardCharsets.UTF_8);
         try (OutputStream os = exchange.getResponseBody()) {
-            exchange.sendResponseHeaders(200, responseBytes.length);
+            exchange.sendResponseHeaders(responseEntity.getCode(), responseBytes.length);
             os.write(responseBytes);
         } catch (IOException e) {
-            log.error("Error when sending response.");
+            log.error("Error when sending response.", e);
         }
     }
 

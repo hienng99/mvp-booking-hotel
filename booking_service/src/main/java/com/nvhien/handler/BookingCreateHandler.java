@@ -33,6 +33,12 @@ public class BookingCreateHandler implements IHandler {
                     .build();
         }
         BookingRequest bookingRequest = JsonUtil.jsonStringToObj(jsonRequest.toJSONString(), BookingRequest.class);
+        if (bookingRequest == null) {
+            return ResponseEntity.builder()
+                    .contentType("application/json")
+                    .code(400)
+                    .build();
+        }
         boolean isSuccess = service.create(bookingRequest);
         return ResponseEntity.builder()
                 .contentType("application/json")

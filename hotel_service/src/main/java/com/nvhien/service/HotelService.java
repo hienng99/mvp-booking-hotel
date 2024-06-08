@@ -1,5 +1,6 @@
 package com.nvhien.service;
 
+import com.nvhien.constant.MHBConst;
 import com.nvhien.entity.HotelDTO;
 import com.nvhien.entity.HotelResponse;
 import com.nvhien.entity.PaginationObj;
@@ -20,7 +21,8 @@ public class HotelService implements IHotelService {
     }
 
     @Override
-    public PaginationObj<HotelResponse> findByLocation(String location, int startIndex, int pageSize) {
+    public PaginationObj<HotelResponse> findByLocation(final String location, int startIndex, int pageSize) {
+        pageSize = Math.min(pageSize, MHBConst.MAX_PAGE_SIZE);
         PaginationObj<HotelDTO> hotelDTOPaginationObj = hotelRepository.findByLocation(location, startIndex, pageSize);
         if (hotelDTOPaginationObj == null || hotelDTOPaginationObj.getRows() == null) {
             return null;
@@ -34,6 +36,7 @@ public class HotelService implements IHotelService {
                 .build()));
         return PaginationObj.<HotelResponse>builder()
                 .total(hotelDTOPaginationObj.getTotal())
+                .pageSize(pageSize)
                 .rows(hotelResponses)
                 .build();
     }

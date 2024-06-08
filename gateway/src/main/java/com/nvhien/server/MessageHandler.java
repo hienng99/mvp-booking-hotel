@@ -86,11 +86,11 @@ public class MessageHandler implements HttpHandler {
                     .build();
             MHBUtil.sendResponse(exchange, responseEntity);
         } catch (Exception exception) {
-            log.error("Exception when send request to {}", uri);
+            log.error("Exception when send request to {}", uri, exception);
             try {
                 exchange.sendResponseHeaders(404, 0);
             } catch (IOException e) {
-                log.error("Exception when send response.");
+                log.error("Exception when send response.", exception);
             }
         } finally {
             exchange.close();
