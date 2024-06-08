@@ -11,7 +11,7 @@ import java.sql.SQLException;
 @Log4j2
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class DBConnector {
-    private static final String DB_URL = "jdbc:mysql://localhost:3306/mbh";
+    private static final String DB_URL = "jdbc:mysql://localhost:3306/mhb";
     private static final String USER_NAME = "root";
     private static final String PASSWORD = "root";
 

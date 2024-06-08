@@ -1,9 +1,8 @@
 package com.nvhien.service;
 
 import com.nvhien.entity.HotelResponse;
-
-import java.util.List;
+import com.nvhien.entity.PaginationObj;
 
 public interface IHotelService {
-    List<HotelResponse> findByLocation(String location, int startIndex, int pageSize);
+    PaginationObj<HotelResponse> findByLocation(String location, int startIndex, int pageSize);
 }

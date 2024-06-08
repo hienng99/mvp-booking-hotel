@@ -14,7 +14,7 @@ public class HotelMain {
     }
 
     @Singleton
-    @Component(modules = HandlerModule.class)
+    @Component(modules = {HandlerModule.class})
     interface HotelComponent {
         HotelHttpServer hotelHttpServer();
     }

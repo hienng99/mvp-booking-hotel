@@ -1,9 +1,8 @@
 package com.nvhien.repository;
 
-import com.nvhien.entity.Hotel;
-
-import java.util.List;
+import com.nvhien.entity.HotelDTO;
+import com.nvhien.entity.PaginationObj;
 
 public interface IHotelRepository {
-    List<Hotel> findByLocation(String location, int offset, int limit);
+    PaginationObj<HotelDTO> findByLocation(String location, int offset, int limit);
 }

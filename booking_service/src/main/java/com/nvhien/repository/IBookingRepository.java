@@ -1,9 +1,9 @@
 package com.nvhien.repository;
 
-import com.nvhien.entity.Booking;
+import com.nvhien.entity.BookingDTO;
 
 public interface IBookingRepository {
-    int create(Booking booking);
+    int create(BookingDTO bookingDTO);
 
-    Booking getById(long id);
+    BookingDTO getById(long id);
 }

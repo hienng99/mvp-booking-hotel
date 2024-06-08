@@ -1,7 +1,9 @@
 package com.nvhien.repository;
 
 import com.nvhien.db.DBConnector;
-import com.nvhien.entity.Hotel;
+import com.nvhien.entity.HotelDTO;
+import com.nvhien.entity.PaginationObj;
+import com.nvhien.util.MHBUtil;
 import lombok.extern.log4j.Log4j2;
 
 import javax.inject.Inject;
@@ -10,7 +12,9 @@ import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.Statement;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Singleton
 @Log4j2
@@ -22,35 +26,44 @@ public class HotelRepository implements IHotelRepository {
     }
 
     @Override
-    public List<Hotel> findByLocation(String location, int offset, int limit) {
-        List<Hotel> hotels = new ArrayList<>();
+    public PaginationObj<HotelDTO> findByLocation(String location, int offset, int limit) {
+        List<HotelDTO> hotels = new ArrayList<>();
         try {
             Statement statement = connection.createStatement();
             StringBuilder sb = new StringBuilder();
-            sb.append("SELECT * FROM hotels WHERE MATCH(address) AGAINST ('");
+            sb.append("SELECT * FROM hotels WHERE address LIKE '%");
             sb.append(location);
-            sb.append("' IN BOOLEAN MODE) ORDER BY MATCH(address) AGAINST ('");
-            sb.append(location);
-            sb.append("' IN BOOLEAN MODE) DESC");
-            sb.append(" LIMIT ");
-            sb.append(limit);
-            sb.append(" OFFSET ");
-            sb.append(offset);
+            sb.append("%'");
             log.info("Execute query: {}", sb.toString());
             ResultSet resultSet = statement.executeQuery(sb.toString());
+            int totalRecords = resultSet.getMetaData().getColumnCount();
 
             while (resultSet.next()) {
-                Hotel hotel = Hotel.builder()
+                HotelDTO hotel = HotelDTO.builder()
                         .id(resultSet.getInt("id"))
                         .name(resultSet.getString("name"))
                         .address(resultSet.getString("address"))
-                        .phone(resultSet.getString("phone_number"))
+                        .phone(resultSet.getString("phone"))
                         .build();
+                hotel.setMatchingLocationProb(MHBUtil.getStringMatching(location, hotel.getAddress()));
                 hotels.add(hotel);
             }
-            return hotels;
+
+            List<HotelDTO> sortedHotels = hotels.stream()
+                    .sorted(Comparator.reverseOrder())
+                    .collect(Collectors.toList());
+            if (offset >= sortedHotels.size()) {
+                return PaginationObj.<HotelDTO>builder()
+                        .total(totalRecords)
+                        .rows(new ArrayList<>())
+                        .build();
+            }
+            return PaginationObj.<HotelDTO>builder()
+                    .total(totalRecords)
+                    .rows(sortedHotels.subList(offset, Math.min(offset + limit, totalRecords)))
+                    .build();
         } catch (Exception exception) {
-            log.error(exception);
+            log.error("Error when query hotel by location.", exception);
             return null;
         }
     }

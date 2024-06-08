@@ -1,7 +1,8 @@
 package com.nvhien.service;
 
-import com.nvhien.entity.Hotel;
+import com.nvhien.entity.HotelDTO;
 import com.nvhien.entity.HotelResponse;
+import com.nvhien.entity.PaginationObj;
 import com.nvhien.repository.HotelRepository;
 
 import javax.inject.Inject;
@@ -19,17 +20,21 @@ public class HotelService implements IHotelService {
     }
 
     @Override
-    public List<HotelResponse> findByLocation(String location, int startIndex, int pageSize) {
-        List<Hotel> hotels = hotelRepository.findByLocation(location, startIndex, pageSize);
+    public PaginationObj<HotelResponse> findByLocation(String location, int startIndex, int pageSize) {
+        PaginationObj<HotelDTO> hotelDTOPaginationObj = hotelRepository.findByLocation(location, startIndex, pageSize);
+        if (hotelDTOPaginationObj == null || hotelDTOPaginationObj.getRows() == null) {
+            return null;
+        }
         List<HotelResponse> hotelResponses = new ArrayList<>();
-        hotels.forEach(hotel -> {
-            hotelResponses.add(HotelResponse.builder()
-                    .id(hotel.getId())
-                    .name(hotel.getName())
-                    .address(hotel.getAddress())
-                    .phone(hotel.getPhone())
-                    .build());
-        });
-        return hotelResponses;
+        hotelDTOPaginationObj.getRows().forEach(hotel -> hotelResponses.add(HotelResponse.builder()
+                .id(hotel.getId())
+                .name(hotel.getName())
+                .address(hotel.getAddress())
+                .phone(hotel.getPhone())
+                .build()));
+        return PaginationObj.<HotelResponse>builder()
+                .total(hotelDTOPaginationObj.getTotal())
+                .rows(hotelResponses)
+                .build();
     }
 }

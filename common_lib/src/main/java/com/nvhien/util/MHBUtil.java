@@ -6,6 +6,7 @@ import com.sun.net.httpserver.HttpExchange;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 import lombok.extern.log4j.Log4j2;
+import org.apache.commons.lang3.StringUtils;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
@@ -23,6 +24,12 @@ import java.util.Map;
 @Log4j2
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public final class MHBUtil {
+    public static double getStringMatching(String str1, String str2) {
+        int distance = StringUtils.getLevenshteinDistance(str1, str2);
+        int maxLength = Math.max(str1.length(), str2.length());
+        return (1.0 - (double) distance / maxLength) * 100;
+    }
+
     public static Map<String, String> extractQueryParam(HttpExchange exchange) {
         String query = exchange.getRequestURI().getQuery();
         if (query == null) {
@@ -50,7 +57,7 @@ public final class MHBUtil {
 
     public static void sendResponse(HttpExchange exchange, ResponseEntity responseEntity) {
         exchange.getResponseHeaders().add("Content-Type", responseEntity.getContentType());
-        if (responseEntity.getBody() == null) {
+        if (responseEntity.getCode() != 200) {
             try {
                 exchange.sendResponseHeaders(responseEntity.getCode(), 0);
             } catch (IOException e) {

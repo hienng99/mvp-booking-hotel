@@ -1,7 +1,7 @@
 package com.nvhien.service;
 
 import com.nvhien.constant.MHBConst;
-import com.nvhien.entity.Booking;
+import com.nvhien.entity.BookingDTO;
 import com.nvhien.entity.BookingRequest;
 import com.nvhien.entity.BookingResponse;
 import com.nvhien.repository.BookingRepository;
@@ -23,7 +23,7 @@ public class BookingService implements IBookingService {
 
     @Override
     public boolean create(BookingRequest bookingRequest) {
-        Booking booking = Booking.builder()
+        BookingDTO bookingDTO = BookingDTO.builder()
                 .customerId(bookingRequest.getCustomerId())
                 .hotelId(bookingRequest.getHotelId())
                 .checkinTime(new Date(bookingRequest.getCheckinTime()))
@@ -31,7 +31,7 @@ public class BookingService implements IBookingService {
                 .totalAmount(bookingRequest.getTotalAmount())
                 .build();
 
-        int resultCode = repository.create(booking);
+        int resultCode = repository.create(bookingDTO);
         if (resultCode != 0) {
             log.info("Booking created successfully");
             return true;
@@ -42,15 +42,17 @@ public class BookingService implements IBookingService {
 
     @Override
     public BookingResponse get(long id) {
-        Booking booking = repository.getById(id);
-        if (booking != null) {
+        BookingDTO bookingDTO = repository.getById(id);
+        if (bookingDTO != null) {
             return BookingResponse.builder()
-                    .id(booking.getId())
-                    .customerId(booking.getCustomerId())
-                    .hotelId(booking.getHotelId())
-                    .checkinTime(MHBConst.SIMPLE_DATE_FORMAT.format(booking.getCheckinTime()))
-                    .checkoutTime(MHBConst.SIMPLE_DATE_FORMAT.format(booking.getCheckoutTime()))
-                    .totalAmount(booking.getTotalAmount())
+                    .id(bookingDTO.getId())
+                    .customerId(bookingDTO.getCustomerId())
+                    .hotelName(bookingDTO.getHotelName())
+                    .hotelAddress(bookingDTO.getHotelAddress())
+                    .hotelPhone(bookingDTO.getHotelPhone())
+                    .checkinTime(MHBConst.SIMPLE_DATE_FORMAT.format(bookingDTO.getCheckinTime()))
+                    .checkoutTime(MHBConst.SIMPLE_DATE_FORMAT.format(bookingDTO.getCheckoutTime()))
+                    .totalAmount(bookingDTO.getTotalAmount())
                     .build();
         }
         return null;
