@@ -32,7 +32,7 @@ public class BookingGetByIdHandler implements IHandler {
                     .build();
         } catch (Exception exception) {
             return ResponseEntity.builder()
-                    .code(500)
+                    .code(400)
                     .contentType("application/json")
                     .build();
         }
